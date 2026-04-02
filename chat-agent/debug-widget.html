@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug ChatAgent Widget</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #00ff00;
+        }
+        .log {
+            background: #000;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+        }
+        .error {
+            color: #ff0000;
+        }
+        .success {
+            color: #00ff00;
+        }
+        .info {
+            color: #00ffff;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug ChatAgent Widget</h1>
+    <div id="logs"></div>
+
+    <script>
+        // Capturar todos los console.log
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+
+        function addLog(message, type = 'info') {
+            const logDiv = document.getElementById('logs');
+            const entry = document.createElement('div');
+            entry.className = `log ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(entry);
+        }
+
+        console.log = function(...args) {
+            addLog(args.join(' '), 'info');
+            originalLog.apply(console, args);
+        };
+
+        console.error = function(...args) {
+            addLog(args.join(' '), 'error');
+            originalError.apply(console, args);
+        };
+
+        console.warn = function(...args) {
+            addLog(args.join(' '), 'info');
+            originalWarn.apply(console, args);
+        };
+
+        addLog('🚀 Iniciando debug...', 'info');
+        addLog('📝 Cargando chat-loader.js...', 'info');
+    </script>
+
+    <!-- Cargar el loader local -->
+    <script src="chat-loader.js" onload="console.log('✅ chat-loader.js cargado')" onerror="console.error('❌ Error cargando chat-loader.js')"></script>
+
+    <script>
+        setTimeout(function() {
+            addLog('⏱️ Verificando si window.ChatAgent existe...', 'info');
+
+            if (window.ChatAgent) {
+                addLog('✅ window.ChatAgent encontrado!', 'success');
+                addLog('📋 Propiedades de ChatAgent: ' + Object.keys(window.ChatAgent).join(', '), 'info');
+
+                try {
+                    addLog('🔧 Inicializando widget...', 'info');
+                    window.ChatAgent.init({
+                        apiKey: 'test-api-key',
+                        webhookUrl: 'https://tu-servidor.com/webhook/test',
+                        position: 'bottom-right',
+                        primaryColor: '#000000',
+                        autoOpen: false
+                    });
+                    addLog('✅ init() ejecutado sin errores', 'success');
+                } catch (error) {
+                    addLog('❌ Error en init(): ' + error.message, 'error');
+                }
+
+                // Verificar si hay contenedor
+                setTimeout(function() {
+                    const container = document.getElementById('chatagent-widget-root');
+                    if (container) {
+                        addLog('✅ Contenedor #chatagent-widget-root creado', 'success');
+                        addLog('📏 innerHTML length: ' + container.innerHTML.length, 'info');
+                        if (container.innerHTML.length === 0) {
+                            addLog('⚠️ El contenedor está vacío - React no se renderizó', 'error');
+                        }
+                    } else {
+                        addLog('❌ Contenedor #chatagent-widget-root NO encontrado', 'error');
+                    }
+
+                    // Verificar si se cargó chat-widget.js
+                    const widgetScript = document.querySelector('script[src*="chat-widget.js"]');
+                    if (widgetScript) {
+                        addLog('✅ Script chat-widget.js encontrado en DOM', 'success');
+                    } else {
+                        addLog('❌ Script chat-widget.js NO encontrado en DOM', 'error');
+                    }
+                }, 2000);
+
+            } else {
+                addLog('❌ window.ChatAgent NO encontrado!', 'error');
+                addLog('🔍 window keys: ' + Object.keys(window).filter(k => k.includes('chat') || k.includes('Chat')).join(', '), 'info');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

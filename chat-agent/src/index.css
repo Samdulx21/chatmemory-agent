@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@import "@fontsource/poppins";
+@import "@fontsource/poppins/300.css"; /* Light */
+@import "@fontsource/poppins/400.css"; /* Regular */
+@import "@fontsource/poppins/500.css"; /* Medium */
+@import "@fontsource/poppins/700.css"; /* Bold */
+
+:root {
+  --primary-color: #1825a4;
+  --secondary-color: #0a1257;
+  --user-message-color: #1825a4;
+  --bot-message-color: #f0f0f0;
+  --background-color: #ffffff;
+  --text-color: #333333;
+  --font-family: 'Arial', sans-serif;
+  --border-radius: 10px;
+}
+
+/* En index.css */
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--text-color);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: typingAnimation 1.4s infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@layer utilities {
+  .font-poppins {
+    font-family: "Poppins", sans-serif;
+  }
+}
